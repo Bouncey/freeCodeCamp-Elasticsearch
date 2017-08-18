@@ -56,7 +56,7 @@ function buildAndInsert(dirLevel) {
       const article = {
         body: content,
         title: pageTitle,
-        url
+        url: `/articles/${url}`
       };
       articles = [ ...articles, article];
 
