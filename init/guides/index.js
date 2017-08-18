@@ -89,7 +89,7 @@ function getGuideArticleData() {
       console.error(err.message);
       throw new Error(err.stack);
     }
-    console.log('challenges removed');
+    console.log('guides removed');
     svn.commands.checkout(
       'https://github.com/freecodecamp/guides/trunk/src/pages/articles',
       articlesDir,
@@ -98,7 +98,7 @@ function getGuideArticleData() {
           console.error(err.message);
           throw new Error(err.stack);
         }
-        console.log('got challenges');
+        console.log('got guides');
         parseArticles(articlesDir)
           .subscribe(
             (dir)=> {
@@ -119,7 +119,5 @@ function getGuideArticleData() {
       });
   });
 }
-
-getGuideArticleData();
 
 module.exports = getGuideArticleData;
