@@ -120,6 +120,4 @@ function getGuideArticleData() {
   });
 }
 
-getGuideArticleData();
-
 module.exports = getGuideArticleData;
