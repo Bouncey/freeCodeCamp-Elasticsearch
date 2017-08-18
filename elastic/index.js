@@ -107,7 +107,7 @@ function getAllTitleFields() {
     index: 'challenge,guides,youtube',
     size: 10000,
     body: {
-      _source: ['title']
+      _source: [ 'title', 'url' ]
     }
   };
 

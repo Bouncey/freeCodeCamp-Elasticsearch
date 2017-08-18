@@ -50,7 +50,7 @@ function buildAndInsert(dirLevel) {
 
       const url = dirLevel
         .split('/')
-        .slice(dirLevel.indexOf('svn') + 1)
+        .slice(dirLevel.split('/').indexOf('svn') + 1)
         .join('/')
         .toLowerCase();
       const article = {
@@ -119,5 +119,7 @@ function getGuideArticleData() {
       });
   });
 }
+
+getGuideArticleData();
 
 module.exports = getGuideArticleData;
