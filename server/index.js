@@ -4,7 +4,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const Rx = require('rx');
+const pmx = require('pmx');
+
 const app = express();
+const probe = pmx.probe();
+
+const reqPerHour = probe.meter({
+  name: 'Requests per hour',
+  samples: 60 * 60 
+});
 
 const { findTheThings, getAllTitleFields } = require('../elastic');
 const cors = require('./middleware/cors');
@@ -24,6 +32,7 @@ app.set('views', './views');
 app.set('view engine', 'pug');
 
 app.get('/search', cors, (req, res) => {
+  reqPerHour.mark();
   const { q: query } = req.query;
   Observable.fromPromise(findTheThings(query))
     .subscribe(

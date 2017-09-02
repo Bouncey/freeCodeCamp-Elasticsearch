@@ -27,6 +27,7 @@
     "helmet": "^3.6.1",
     "morgan": "^1.8.2",
     "node-svn-ultimate": "^1.0.4",
+    "pmx": "^1.2.0",
     "pug": "^2.0.0-rc.2",
     "request": "^2.81.0",
     "rss-parser": "^2.9.0",
