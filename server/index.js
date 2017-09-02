@@ -13,6 +13,16 @@ const reqPerHour = probe.meter({
   name: 'Requests per hour',
   samples: 60 * 60 
 });
+const reqPerMin = probe.meter({
+  name: 'Requests per minute',
+  samples: 60
+});
+const reqPerSec = probe.meter({
+  name: 'Requests per second',
+  samples: 1
+});
+
+const probes = [ reqPerHour, reqPerMin, reqPerSec ];
 
 const { findTheThings, getAllTitleFields } = require('../elastic');
 const cors = require('./middleware/cors');
@@ -32,7 +42,7 @@ app.set('views', './views');
 app.set('view engine', 'pug');
 
 app.get('/search', cors, (req, res) => {
-  reqPerHour.mark();
+  probes.map(probe => probe.mark());
   const { q: query } = req.query;
   Observable.fromPromise(findTheThings(query))
     .subscribe(
@@ -72,6 +82,15 @@ app.post('*', (req, res) => {
 
 app.listen(PORT, () => {
   log(`API server listening on port ${PORT}!`);
+  getAllTitleFields()
+  .then(titles => {
+    typeAheadTitles = [ ...titles ];
+    info('typeAheadTitles seeded');
+  })
+  .catch(err => {
+    error(err.message);
+  });
+});
   getAllTitleFields()
   .then(titles => {
     typeAheadTitles = [ ...titles ];
