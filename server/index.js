@@ -17,14 +17,13 @@ const { Observable } = Rx;
 let typeAheadTitles = [];
 
 app.use(helmet());
-app.use(cors);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.set('views', './views');
 app.set('view engine', 'pug');
 
-app.get('/search', (req, res) => {
+app.get('/search', cors, (req, res) => {
   const { q: query } = req.query;
   Observable.fromPromise(findTheThings(query))
     .subscribe(
@@ -38,7 +37,7 @@ app.get('/search', (req, res) => {
     );
 });
 
-app.get('/type-ahead', (req, res) => {
+app.get('/type-ahead', cors, (req, res) => {
   if (typeAheadTitles.length) {
     res.status(200).end(JSON.stringify(typeAheadTitles));
   } else {
