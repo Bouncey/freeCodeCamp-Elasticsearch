@@ -91,12 +91,3 @@ app.listen(PORT, () => {
     error(err.message);
   });
 });
-  getAllTitleFields()
-  .then(titles => {
-    typeAheadTitles = [ ...titles ];
-    info('typeAheadTitles seeded');
-  })
-  .catch(err => {
-    error(err.message);
-  });
-});
