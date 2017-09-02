@@ -38,7 +38,7 @@ app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.set('views', './views');
+app.set('views', __dirname +'/views');
 app.set('view engine', 'pug');
 
 app.get('/search', cors, (req, res) => {
@@ -73,7 +73,7 @@ app.get('/type-ahead', cors, (req, res) => {
 });
 
 app.get('*', (req, res) => {
-  res.render('noRoute', { route: req.originalUrl }).end();
+  res.render('noRoute', { route: req.originalUrl });
 });
 
 app.post('*', (req, res) => {
@@ -82,15 +82,6 @@ app.post('*', (req, res) => {
 
 app.listen(PORT, () => {
   log(`API server listening on port ${PORT}!`);
-  getAllTitleFields()
-  .then(titles => {
-    typeAheadTitles = [ ...titles ];
-    info('typeAheadTitles seeded');
-  })
-  .catch(err => {
-    error(err.message);
-  });
-});
   getAllTitleFields()
   .then(titles => {
     typeAheadTitles = [ ...titles ];
