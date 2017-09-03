@@ -49,8 +49,41 @@ function singleInsert({ index, type, document }) {
 function bulkInsert({ index, type, documents }) {
   const insert = { index:  { _index: index, _type: type } };
   const request = documents.reduce((acc, current) => {
-    return [ ...acc, insert, current ];
+    return [
+      ...acc,
+      Object.assign({}, insert, { _id: current.id }),
+      current
+    ];
   }, []);
+  client.bulk({
+    body: request
+  }, 
+  (err) => {
+    if (err) { error(JSON.stringify(err, null, 2)); }
+  });
+}
+
+function bulkUpsert({ index, type, documents }) {
+  const update = {
+    update:
+    {
+      _index: index,
+      _type: type, 
+      _retry_on_conflict: 3
+    }
+  };
+  const request = documents
+    .map(doc => {
+      doc.doc_as_upsert = true;
+      return doc;
+    })
+    .reduce((acc, current) => (
+      [
+        ...acc,
+        Object.assign({}, update, { _id: current.id }),
+        current
+      ]
+    ), []);
   client.bulk({
     body: request
   }, 
@@ -135,6 +168,7 @@ function getAllTitleFields() {
 
 module.exports ={
   bulkInsert,
+  bulkUpsert,
   deleteAll,
   findTheThings,
   getAllTitleFields,

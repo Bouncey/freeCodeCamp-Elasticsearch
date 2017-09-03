@@ -6,7 +6,10 @@ const helmet = require('helmet');
 const Rx = require('rx');
 const pmx = require('pmx');
 
-const guidesWebhook = require('./endpoints/webhook-guides');
+const {
+  challengesWebhook,
+  guidesWebhook
+} = require('./endpoints/webhooks');
 
 const app = express();
 const probe = pmx.probe();
@@ -75,6 +78,7 @@ app.get('/type-ahead', cors, (req, res) => {
 });
 
 app.post('/webhook/guides', guidesWebhook);
+app.post('/webhook/challenges', challengesWebhook);
 
 app.get('*', (req, res) => {
   res.render('noRoute', { route: req.originalUrl });

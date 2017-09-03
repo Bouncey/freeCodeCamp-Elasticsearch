@@ -4,8 +4,11 @@ const svn = require('node-svn-ultimate');
 const fs = require('fs-extra');
 
 const {
-  bulkInsert
+  bulkInsert,
+  bulkUpsert
 } = require('../../elastic');
+
+let isAnUpdate = false;
 
 function dasherize(name) {
   return ('' + name)
@@ -53,14 +56,17 @@ function parseAndInsert() {
       }).subscribe(
             (challengeBlock => {
               const { block, challenges } = challengeBlock;
-              bulkInsert({ index: 'challenge', type: block, documents: challenges });
+              isAnUpdate ?
+                bulkUpsert({ index: 'challenge', type: block, documents: challenges }) :
+                bulkInsert({ index: 'challenge', type: block, documents: challenges });
             })
           );
 }
 
 const challengesDir = `${process.cwd()}/init/challenges/seed/challenges/`;
 
-function getChallengeData() {
+function getChallengeData(update) {
+  isAnUpdate = !!update;
   fs.remove(challengesDir, (err) => {
     if (err) {
       console.error(err.message);
@@ -68,7 +74,7 @@ function getChallengeData() {
     }
     console.log('challenges removed');
     svn.commands.checkout(
-      'https://github.com/freecodecamp/freecodecamp/trunk/seed/challenges',
+      'https://github.com/freecodecamp/freecodecamp/branches/master/seed/challenges',
       challengesDir,
       (err) => {
         if (err) {

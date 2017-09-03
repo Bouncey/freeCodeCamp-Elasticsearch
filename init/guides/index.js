@@ -2,8 +2,9 @@ const Rx = require('rx');
 const svn = require('node-svn-ultimate');
 const fse = require('fs-extra');
 const chalk = require('chalk');
+const hash = require('string-hash');
 
-const { bulkInsert } = require('../../elastic');
+const { bulkInsert, bulkUpsert } = require('../../elastic');
 const { titleify } = require('./utils');
 
 const { Observable } = Rx;
@@ -18,6 +19,7 @@ const shouldBeIgnoredRE = /^(\_|\.)/;
 const articlesDir = `${process.cwd()}/init/guides/svn`;
 
 let articles = [];
+let isAnUpdate = false;
 
 function readDir(dir) {
   return fse.readdirSync(dir)
@@ -56,12 +58,15 @@ function buildAndInsert(dirLevel) {
       const article = {
         body: content,
         title: pageTitle,
-        url: `/articles/${url}`
+        url: `/articles/${url}`,
+        id: hash(url)
       };
       articles = [ ...articles, article];
 
       if (articles.length >= 150) {
-        bulkInsert({ index: 'guides', type: 'article', documents: articles.slice(0) });
+        isAnUpdate ?
+          bulkUpsert({ index: 'guides', type: 'article', documents: articles.slice(0) }) :
+          bulkInsert({ index: 'guides', type: 'article', documents: articles.slice(0) });
         articles = [];
       }
     });
@@ -83,7 +88,8 @@ function parseArticles(dirLevel) {
     });
 }
 
-function getGuideArticleData() {
+function getGuideArticleData(update) {
+  isAnUpdate = !!update;
   fse.remove(articlesDir, (err) => {
     if (err) {
       console.error(err.message);
@@ -112,7 +118,9 @@ function getGuideArticleData() {
             },
             () => {
               if (articles.length > 0) {
-                bulkInsert({ index: 'guides', type: 'article', documents: articles.slice(0) });
+                isAnUpdate ?
+                  bulkUpsert({ index: 'guides', type: 'article', documents: articles.slice(0) }) :
+                  bulkInsert({ index: 'guides', type: 'article', documents: articles.slice(0) });
               }
             }
           );
