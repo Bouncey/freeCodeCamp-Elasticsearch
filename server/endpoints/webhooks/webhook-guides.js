@@ -1,4 +1,4 @@
-const getGuideArticleData = require('../../init/guides');
+const getGuideArticleData = require('../../../init/guides');
 
 module.exports = function guidesWebhook(req, res) {
   const { action, pull_request: { base, merged } } = req.body;

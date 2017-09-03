@@ -1,4 +1,4 @@
-const getChallengeData = require('../../init/challenges');
+const getChallengeData = require('../../../init/challenges');
 
 module.exports = function challengesWebhook(req, res) {
   const { action, pull_request: { base, merged } } = req.body;
