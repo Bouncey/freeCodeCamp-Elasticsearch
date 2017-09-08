@@ -15,6 +15,9 @@ function log(str, colour = 'green') {
 
 const isAFileRE = /(\.md|\.jsx?|\.html?)$/;
 const shouldBeIgnoredRE = /^(\_|\.)/;
+const excludedDirs = [
+  'search'
+];
 
 const articlesDir = `${process.cwd()}/init/guides/svn`;
 
@@ -24,6 +27,7 @@ let isAnUpdate = false;
 function readDir(dir) {
   return fse.readdirSync(dir)
   .filter(item => !isAFileRE.test(item))
+  .filter(dir => !excludedDirs.includes(dir))
   .filter(file => !shouldBeIgnoredRE.test(file));
 }
 
@@ -58,7 +62,7 @@ function buildAndInsert(dirLevel) {
       const article = {
         body: content,
         title: pageTitle,
-        url: `/articles/${url}`,
+        url: `/${url}`,
         id: hash(url)
       };
       articles = [ ...articles, article];
@@ -97,7 +101,7 @@ function getGuideArticleData(update) {
     }
     console.log('guides removed');
     svn.commands.checkout(
-      'https://github.com/freecodecamp/guides/trunk/src/pages/articles',
+      'https://github.com/freecodecamp/guides/trunk/src/pages',
       articlesDir,
       (err) => {
         if (err) {
