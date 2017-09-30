@@ -1,14 +1,30 @@
 const getGuideArticleData = require('../../../init/guides');
+const { error, info, log } = require('../../../utils');
 
-module.exports = function guidesWebhook(req, res) {
-  const { action, pull_request: { base, merged } } = req.body;
-  if (
-      action === 'closed' &&
-      base.ref === 'master' &&
-      merged
+module.exports = function (app) {
+
+  app.post('/guides', (req, res) => {
+    if (
+      !req.body ||
+      !req.body.action ||
+      !req.body.pull_request
     ) {
-    // update the guides
-    getGuideArticleData('update');
-  }
-  res.sendStatus(200).end();
+      error('not GitHub POST request');
+      res.sendStatus(400).end();
+      return;
+    }
+    const { action, pull_request: { base, merged } } = req.body;
+    if (
+        action === 'closed' &&
+        base.ref === 'master' &&
+        merged
+      ) {
+      log('Updating the guides from a webhook');
+      getGuideArticleData('update');
+      res.sendStatus(200).end();
+    } else {
+      info('webhook triggered by Github, not a merged PR');
+      res.sendStatus(200).end();
+    }
+  });
 };

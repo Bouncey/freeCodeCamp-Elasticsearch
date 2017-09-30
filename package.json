@@ -4,8 +4,10 @@
   "description": "A search engine for all things freeCodeCamp",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon server",
     "init": "node init",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test-server": "mocha -R spec ./server/**/*test.js",
+    "test": "npm run test-server"
   },
   "repository": {
     "type": "git",
@@ -19,20 +21,28 @@
   "homepage": "https://github.com/Bouncey/freeCodeCamp-Elasticsearch#readme",
   "dependencies": {
     "body-parser": "^1.17.2",
+    "chai": "^4.1.2",
     "chalk": "^1.1.3",
     "cors": "^2.8.4",
+    "crypto": "^1.0.1",
     "dotenv": "^4.0.0",
     "elasticsearch": "^13.0.1",
     "express": "^4.15.3",
     "helmet": "^3.6.1",
+    "mocha": "^3.5.3",
     "morgan": "^1.8.2",
     "node-svn-ultimate": "^1.0.4",
+    "nodemon": "^1.12.1",
     "pmx": "^1.2.0",
+    "proxyquire": "^1.8.0",
     "pug": "^2.0.0-rc.2",
     "request": "^2.81.0",
     "rss-parser": "^2.9.0",
     "rx": "^4.1.0",
+    "secure-compare": "^3.0.1",
+    "sinon": "^4.0.0",
     "string-hash": "^1.1.3",
+    "supertest": "^3.0.0",
     "textract": "^2.1.2"
   },
   "devDependencies": {
