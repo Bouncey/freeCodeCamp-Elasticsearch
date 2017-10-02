@@ -1,5 +1,4 @@
-const assert = require('chai').assert;
-const should = require('chai').should();
+/* global describe beforeEach it */
 const express = require('express');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
@@ -7,6 +6,7 @@ const supertest = require('supertest');
 const bodyParser = require('body-parser');
 
 const {
+  fullScale,
   masterMergedPR,
   masterNotMergedPR,
   masterPROpen,
@@ -14,14 +14,14 @@ const {
 } = require('./webhookPayloads');
 
 describe('POST /guides', () => {
-  let guideUpdateStub, app, route, request;
+  let callInitStub, app, route, request;
   beforeEach(function () {
-    guideUpdateStub = sinon.stub();
+    callInitStub = sinon.stub();
     app = express();
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
     route = proxyquire('../webhook-guides', {
-      '../../../init/guides': guideUpdateStub
+      './callInit': callInitStub
     });
     route(app);
     request = supertest(app);
@@ -38,7 +38,7 @@ describe('POST /guides', () => {
       .post('/guides')
       .send(masterPROpen)
       .expect(() => {
-        if (guideUpdateStub.called) {
+        if (callInitStub.called) {
           throw new Error('guide update called!');
         }
       })
@@ -51,7 +51,7 @@ describe('POST /guides', () => {
     .send(masterNotMergedPR)
     .expect(200)
     .expect(() => {
-      if (guideUpdateStub.called) {
+      if (callInitStub.called) {
         throw new Error('guide update called!');
       }
     })
@@ -64,7 +64,7 @@ describe('POST /guides', () => {
     .send(notMasterMergedPR)
     .expect(200)
     .expect(() => {
-      if (guideUpdateStub.called) {
+      if (callInitStub.called) {
         throw new Error('guide update called!');
       }
     })
@@ -77,7 +77,20 @@ describe('POST /guides', () => {
     .send(masterMergedPR)
     .expect(200)
     .expect(() => {
-      if (!guideUpdateStub.called) {
+      if (!callInitStub.called) {
+        throw new Error('guide update wasn\'t called!');
+      }
+    })
+    .end(done);
+  });
+
+  it('should call update when PR is merged on master, FULL SCALE', done => {
+    request
+    .post('/guides')
+    .send(fullScale)
+    .expect(200)
+    .expect(() => {
+      if (!callInitStub.called) {
         throw new Error('guide update wasn\'t called!');
       }
     })

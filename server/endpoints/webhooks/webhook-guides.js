@@ -1,4 +1,4 @@
-const getGuideArticleData = require('../../../init/guides');
+const callInit = require('./callInit');
 const { error, info, log } = require('../../../utils');
 
 module.exports = function (app) {
@@ -20,7 +20,7 @@ module.exports = function (app) {
         merged
       ) {
       log('Updating the guides from a webhook');
-      getGuideArticleData('update');
+      callInit();
       res.sendStatus(200).end();
     } else {
       info('webhook triggered by Github, not a merged PR');
