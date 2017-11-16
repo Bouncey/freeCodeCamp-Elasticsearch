@@ -1,3 +1,4 @@
+const path = require('path');
 const Rx = require('rx');
 const svn = require('node-svn-ultimate');
 const fse = require('fs-extra');
@@ -19,7 +20,7 @@ const excludedDirs = [
   'search'
 ];
 
-const articlesDir = `${process.cwd()}/init/guides/svn`;
+const articlesDir = path.resolve(__dirname, '../guides/svn');
 
 let articles = [];
 
