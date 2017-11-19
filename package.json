@@ -28,7 +28,7 @@
     "elasticsearch": "^13.0.1",
     "express": "^4.15.3",
     "helmet": "^3.6.1",
-    "mocha": "^3.5.3",
+    "mocha": "^4.0.0",
     "morgan": "^1.8.2",
     "node-svn-ultimate": "^1.0.4",
     "nodemon": "^1.12.1",
