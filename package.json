@@ -7,7 +7,9 @@
     "dev": "nodemon server",
     "init": "node init",
     "test-server": "mocha -R spec ./server/**/*test.js",
-    "test": "npm run test-server"
+    "test": "npm run test-server",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -28,7 +30,7 @@
     "elasticsearch": "^13.0.1",
     "express": "^4.15.3",
     "helmet": "^3.6.1",
-    "mocha": "^3.5.3",
+    "mocha": "^4.0.0",
     "morgan": "^1.8.2",
     "node-svn-ultimate": "^1.0.4",
     "nodemon": "^1.12.1",
@@ -42,9 +44,11 @@
     "sinon": "^4.0.0",
     "string-hash": "^1.1.3",
     "supertest": "^3.0.0",
-    "textract": "^2.1.2"
+    "textract": "^2.1.2",
+    "snyk": "^1.50.0"
   },
   "devDependencies": {
     "eslint": "^3.19.0"
-  }
+  },
+  "snyk": true
 }
