@@ -52,6 +52,8 @@ app.use('*', (req, res, next) => {
 app.use('/search/v1', searchRouter);
 // webhooks
 app.use('/webhook', webhookRouter);
+// diasble this until the rollout of news
+// app.use('/news/v1', newsRouter);
 
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
