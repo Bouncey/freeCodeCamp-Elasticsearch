@@ -1,6 +1,5 @@
 const events = require('events');
 const elasticsearch = require('elasticsearch');
-const uuidv4 = require('uuid/v4');
 
 const eventEmitter = new events.EventEmitter();
 const promisify = require('promisify-event');
@@ -47,7 +46,7 @@ function bulkInsert({ index, type, documents }) {
   const request = documents.reduce((acc, current) => {
     return [
       ...acc,
-      Object.assign({}, insert, { _id: current.id }),
+      {...insert, index: { ...insert.index, _id: current.id } },
       current
     ];
   }, []);
@@ -144,7 +143,10 @@ function incrementViewCount(id) {
       type: 'story',
       id,
       body: {
-        script: `ctx._source.views += 1; ctx._source.newsViews += '${Date.now()}';`
+        script: {
+          lang: 'painless',
+          inline: `ctx._source.views += 1; ctx._source.newsViews.add(${Date.now()}L);`
+        }
       },
       retry_on_conflict: 3
     }, function (err) {
