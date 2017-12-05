@@ -1,3 +1,4 @@
+const { exec } = require('child_process');
 const path = require('path');
 const svn = require('node-svn-ultimate');
 const fse = require('fs-extra');
@@ -5,6 +6,20 @@ const matter = require( 'gray-matter');
 const { Observable } = require( 'rx');
 const { bulkInsert } = require( '../../elastic');
 const { log, readDir } = require( '../../utils');
+
+const cURL = `curl -XPUT "http://localhost:9200/news" -H 'Content-Type: application/json' -d'
+{
+  "mappings": {
+    "story": {
+      "properties": {
+        "newsViews": {
+          "type": "date"
+        }
+      }
+    }
+  }
+}'`;
+
 const logger = log('news');
 const viewMap = fse.readFileSync(path.resolve(__dirname, './views.txt'), 'utf8')
   .split('\n')
@@ -31,7 +46,7 @@ async function buildAndInsert(file) {
     content: fileData.content,
     data: { ...fileData.data },
     views: id in viewMap ? viewMap[id] : 1,
-    newsViews: [],
+    newsViews: [Date.now()],
     url
   };
   stories = [ ...stories, story ];
@@ -42,7 +57,24 @@ async function buildAndInsert(file) {
   return;
 }
 
+function mapNewsViews() {
+  return new Promise((resolve, reject) => {
+    exec(cURL, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        reject();
+        return;
+      }
+      if (JSON.parse(stdout).acknowledged) {
+        resolve();
+      }
+      stderr && console.log(`${stderr}`);
+    });
+  });
+}
+
 exports.getStoryData = async () => {
+  await mapNewsViews();
   fse.remove(storiesDir, (err) => {
     if (err) {
       logger(err.message, 'yellow');
