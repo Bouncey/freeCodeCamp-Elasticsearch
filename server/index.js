@@ -8,11 +8,15 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const Rx = require('rx');
 const pmx = require('pmx');
-
+const { findTheThings } = require('../elastic');
+const { log } = require('../utils');
+const logger = log('server');
+const PORT = process.env.PORT || 7000;
+const { Observable } = Rx;
 const searchRouter = require('./endpoints/search');
 const webhookRouter = require('./endpoints/webhooks');
 const newsRouter = require('./endpoints/news');
-
+const { cors, options } = require('./middleware/cors');
 const app = express();
 const probe = pmx.probe();
 
@@ -31,15 +35,8 @@ const reqPerSec = probe.meter({
 
 const probes = [ reqPerHour, reqPerMin, reqPerSec ];
 
-const { findTheThings } = require('../elastic');
-const cors = require('./middleware/cors');
-const { log } = require('../utils');
 
-const logger = log('server');
-
-const PORT = process.env.PORT || 7000;
-
-const { Observable } = Rx;
+app.all('*', cors(options));
 
 app.use('*', (req, res, next) => {
   probes.forEach(probe => probe.mark());

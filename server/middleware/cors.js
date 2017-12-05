@@ -1,7 +1,6 @@
 const cors = require('cors');
 
 const whitelist = [
-
   'http://guide.freecodecamp.org',
   'https://guide.freecodecamp.org',
   'http://news.freecodecamp.org',
@@ -10,12 +9,13 @@ const whitelist = [
 ];
 const corsOptions = {
   origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
+    if (whitelist.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('The request is not from an authorised origin'));
     }
-  }
+  },
+  optionsSuccessStatus: 200
 };
-
-module.exports = cors(corsOptions);
+exports.cors = cors;
+exports.options = corsOptions;
