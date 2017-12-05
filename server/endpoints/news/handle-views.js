@@ -1,4 +1,4 @@
-const { getViewCount, incrementViewCount } = require('../../../elastic/index.js');
+const { getViewCount, getAllViewCounts, incrementViewCount } = require('../../../elastic/index.js');
 const { log } = require('../../../utils');
 const logger = log('handle-views');
 
@@ -8,23 +8,20 @@ module.exports = function (app) {
     res.sendStatus(400).end({'error': 'An id must be provided'});
   });
 
+  app.get('/get-views/all-mapped', async (req, res) => {
+    const map = await getAllViewCounts();
+    res.json(map).end('OK');
+  });
+
   app.get('/get-views/:storyId', async (req, res) => {
     const { storyId } = req.params;
+    logger(storyId);
     if (!storyId) {
       res.sendStatus(400).end({'error': 'An id must be provided'});
       return;
     }
-    let views;
-    try {
-      views = await getViewCount(storyId);
-    }
-    catch (err) {
-      logger(`
-      (getViewCount): ${storyId}
-      ${err.message}
-      `, 'red');
-      views = false;
-    }
+    let views = await getViewCount(storyId);
+    logger(views);
     if (views) {
       res.json(JSON.stringify({views}));
     } else {
@@ -53,9 +50,9 @@ module.exports = function (app) {
       result = false;
     }
     if (result) {
-      res.sendStatus(200).end('OK');
+      res.json({ status: 'success', id: storyId });
     } else {
-      res.sendStatus(400).end('KO');
+      res.json({ status: 'failed', id: storyId });
     }
   });
 };

@@ -15,7 +15,7 @@ const dataSources = [
   getYoutubeData,
   getChallengeData,
   // disable this until the roll out of news
-  // getStoryData
+  getStoryData
 ];
 
 function init() {

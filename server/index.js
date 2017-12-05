@@ -10,7 +10,7 @@ const Rx = require('rx');
 const pmx = require('pmx');
 
 const webhookRouter = require('./endpoints/webhooks');
-const newsRouter = require('./endpoints/stories');
+const newsRouter = require('./endpoints/news');
 
 const app = express();
 const probe = pmx.probe();
@@ -43,7 +43,7 @@ const { Observable } = Rx;
 // webhooks
 app.use('/webhook', webhookRouter);
 // diasble this until the rollout of news
-// app.use('/news', newsRouter);
+app.use('/news/v1', newsRouter);
 
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -51,6 +51,11 @@ app.use(bodyParser.json());
 
 app.set('views', __dirname +'/views');
 app.set('view engine', 'pug');
+
+app.all('*', (req, res, next) => {
+	logger(req.originalUrl)
+next();
+})
 
 app.get('/search', cors, (req, res) => {
   const { q: query } = req.query;

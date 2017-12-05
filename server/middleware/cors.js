@@ -1,8 +1,11 @@
 const cors = require('cors');
 
 const whitelist = [
+
   'http://guide.freecodecamp.org',
   'https://guide.freecodecamp.org',
+  'http://news.freecodecamp.org',
+  'https://news.freecodecamp.org',
   'http://localhost:8000'
 ];
 const corsOptions = {

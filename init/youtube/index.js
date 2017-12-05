@@ -83,14 +83,13 @@ function getPlayListItems(page, id, update) {
 
         if (nextPageToken) {
           getPlayListItems(nextPageToken, items[0].snippet.playlistId, update);
+        } else {
+          logger('COMPLETE');
         }
       },
       (err) => {
         logger('getPlayListItems Error: ' + err.message, 'red');
       },
-      () => {
-        logger('COMPLETE');
-      }
     );
 }
 

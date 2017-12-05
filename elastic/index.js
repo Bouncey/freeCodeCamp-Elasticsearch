@@ -144,14 +144,12 @@ function incrementViewCount(id) {
       type: 'story',
       id,
       body: {
-        script: `ctx._source.views += 1; ctx._source.newsViews += ${Date.now()}`,
-        upsert: {
-          views: 1,
-          newsViews: [ Date.now() ]
-        }
-      }
+        script: `ctx._source.views += 1; ctx._source.newsViews += '${Date.now()}';`
+      },
+      retry_on_conflict: 3
     }, function (err) {
       if (err) {
+        logger(JSON.stringify(err, null, 2), 'cyan');
         logger(err.message, 'red');
         reject(false);
         return;

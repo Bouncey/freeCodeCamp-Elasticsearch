@@ -24,10 +24,15 @@ let stories = [];
 async function buildAndInsert(file) {
   const fileContent = await fse.readFileSync(file, 'utf8');
   const fileData = matter(fileContent);
+  const { id } = fileData.data;
+  const url = '/' + file.split('/').slice(-1)[0].replace(/\.md$/, '');
   const story = {
+    id,
     content: fileData.content,
     data: { ...fileData.data },
-    views: viewMap[fileData.data.id]
+    views: id in viewMap ? viewMap[id] : 1,
+    newsViews: [],
+    url
   };
   stories = [ ...stories, story ];
   if (stories.length >= 150) {
@@ -37,20 +42,21 @@ async function buildAndInsert(file) {
   return;
 }
 
-exports.getStoryData = () => {
+exports.getStoryData = async () => {
   fse.remove(storiesDir, (err) => {
     if (err) {
       logger(err.message, 'yellow');
       throw new Error(err.stack);
     }
     svn.commands.checkout(
-      'https://github.com/freecodecamp/news/trunk/src/pages',
+      'https://github.com/freecodecamp/news/trunk/src/resource/text',
       storiesDir,
       (err) => {
         if (err) {
           logger(err.message, 'red');
           throw new Error(err.stack);
         }
+        logger('got stories', 'magenta');
         Observable.zip(
           Observable.timer(0, 750),
           Observable.from(readDir(storiesDir, true)).bufferWithCount(100),
