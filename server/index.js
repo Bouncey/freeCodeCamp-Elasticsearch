@@ -57,7 +57,7 @@ app.use('/webhook', webhookRouter);
 // app.use('/news/v1', newsRouter);
 =======
 // diasble this until the rollout of news
-app.use('/news/v1', newsRouter);
+// app.use('/news/v1', newsRouter);
 // search
 app.use('/search/v1', searchRouter);
 // webhooks
