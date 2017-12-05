@@ -46,6 +46,7 @@ app.use('*', (req, res, next) => {
   next();
 });
 
+<<<<<<< a2eb7f20f8b03fa4ad60e7d493f151a032ee3941
 // diasble this until the rollout of news
 // app.use('/news/v1', newsRouter);
 // search
@@ -54,6 +55,14 @@ app.use('/search/v1', searchRouter);
 app.use('/webhook', webhookRouter);
 // diasble this until the rollout of news
 // app.use('/news/v1', newsRouter);
+=======
+// diasble this until the rollout of news
+app.use('/news/v1', newsRouter);
+// search
+app.use('/search/v1', searchRouter);
+// webhooks
+app.use('/webhook', webhookRouter);
+>>>>>>> Prep to move search behind a v1 endpoint
 
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
