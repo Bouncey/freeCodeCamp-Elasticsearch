@@ -16,7 +16,7 @@ const { Observable } = Rx;
 const searchRouter = require('./endpoints/search');
 const webhookRouter = require('./endpoints/webhooks');
 const newsRouter = require('./endpoints/news');
-const { cors, options } = require('./middleware/cors');
+const cors = require('./middleware/cors');
 const app = express();
 const probe = pmx.probe();
 
@@ -34,9 +34,6 @@ const reqPerSec = probe.meter({
 });
 
 const probes = [ reqPerHour, reqPerMin, reqPerSec ];
-
-
-app.all('*', cors(options));
 
 app.use('*', (req, res, next) => {
   probes.forEach(probe => probe.mark());
