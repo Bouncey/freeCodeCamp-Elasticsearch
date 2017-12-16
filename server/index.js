@@ -57,7 +57,7 @@ app.use(bodyParser.json());
 app.set('views', __dirname +'/views');
 app.set('view engine', 'pug');
 
-// this route is to be removed when we update guides to use the v1 route
+// this route is to be removed when we update guides and FCCSearchBar to use the v1 route
 app.get('/search', cors, (req, res) => {
   const { q: query } = req.query;
   Observable.fromPromise(findTheThings(query))

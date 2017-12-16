@@ -1,20 +1,13 @@
 const cors = require('cors');
 
 const whitelist = [
-  'http://guide.freecodecamp.org',
-  'https://guide.freecodecamp.org',
-  'http://news.freecodecamp.org',
-  'https://news.freecodecamp.org',
-  'http://localhost:8000'
+  /(\.|https:\/\/)freecodecamp\.org/, // freecodecamp.org and any subdomain of
+  /\.netlify\.com/, // deploy previews
+  'http://localhost:3000', // fcc dev
+  'http://localhost:8000' // guides dev
 ];
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('The request is not from an authorised origin'));
-    }
-  },
+  origin: whitelist,
   optionsSuccessStatus: 200
 };
 exports.cors = cors;
