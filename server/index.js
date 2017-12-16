@@ -8,15 +8,11 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const Rx = require('rx');
 const pmx = require('pmx');
-const { findTheThings } = require('../elastic');
-const { log } = require('../utils');
-const logger = log('server');
-const PORT = process.env.PORT || 7000;
-const { Observable } = Rx;
+
 const searchRouter = require('./endpoints/search');
 const webhookRouter = require('./endpoints/webhooks');
 const newsRouter = require('./endpoints/news');
-const { cors, options } = require('./middleware/cors');
+
 const app = express();
 const probe = pmx.probe();
 
@@ -35,8 +31,15 @@ const reqPerSec = probe.meter({
 
 const probes = [ reqPerHour, reqPerMin, reqPerSec ];
 
+const { findTheThings } = require('../elastic');
+const cors = require('./middleware/cors');
+const { log } = require('../utils');
 
-app.all('*', cors(options));
+const logger = log('server');
+
+const PORT = process.env.PORT || 7000;
+
+const { Observable } = Rx;
 
 app.use('*', (req, res, next) => {
   probes.forEach(probe => probe.mark());
@@ -57,7 +60,7 @@ app.use(bodyParser.json());
 app.set('views', __dirname +'/views');
 app.set('view engine', 'pug');
 
-// this route is to be removed when we update guides and FCCSearchBar to use the v1 route
+// this route is to be removed when we update guides to use the v1 route
 app.get('/search', cors, (req, res) => {
   const { q: query } = req.query;
   Observable.fromPromise(findTheThings(query))

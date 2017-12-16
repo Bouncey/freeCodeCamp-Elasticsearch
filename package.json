@@ -7,7 +7,7 @@
     "dev": "nodemon server",
     "init": "node init",
     "get-test": "babel getTest.js",
-    "build:server": "npx babel server --out-dir lib --ignore spec.js,test.js",
+    "start:server": "npx babel server --out-dir lib --ignore spec.js,test.js && node lib",
     "test-server": "mocha --require babel-polyfill --compilers js:babel-register -R spec ./server/**/*test.js",
     "test-server:watch": "mocha --require babel-polyfill --compilers js:babel-register -R spec ./server/**/*test.js --watch",
     "test": "npm run test-server",
