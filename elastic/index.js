@@ -1,11 +1,12 @@
 const events = require('events');
 const elasticsearch = require('elasticsearch');
-
-const eventEmitter = new events.EventEmitter();
 const promisify = require('promisify-event');
 const { log } = require('../utils');
+const { normaliser } = require('./normaliser');
+
 const { ELASTIC_AUTH, ELASTIC_HOST } = process.env;
 const logger = log('elastic');
+const eventEmitter = new events.EventEmitter();
 let connected = false;
 
 const client = new elasticsearch.Client({
@@ -42,8 +43,9 @@ function singleInsert({ index, type, document, id }) {
 }
 
 function bulkInsert({ index, type, documents }) {
+  const normalisedDocs = normaliser(index, documents);
   const insert = { index:  { _index: index, _type: type } };
-  const request = documents.reduce((acc, current) => {
+  const request = normalisedDocs.reduce((acc, current) => {
     return [
       ...acc,
       {...insert, index: { ...insert.index, _id: current.id } },
@@ -117,8 +119,19 @@ function findTheThings(query) {
   const searchQuery = {
     body: {
       query: {
-        match: {
-          _all: query
+        fuzzy: {
+          friendlySearchString: {
+            value: query,
+            fuzziness: 1
+          }
+        }
+      },
+      highlight : {
+        force_source: true,
+        fragment_size: 150,
+        tags_schema: 'styled',
+        fields : {
+          friendlySearchString: { pre_tags : ['<em class="fcc_resultHighlight">'], post_tags : ['</em>'] }
         }
       }
     }
@@ -131,6 +144,7 @@ function findTheThings(query) {
         reject(err);
         return;
       }
+      console.info(response.hits.hits[1]);
       resolve(response.hits.hits);
     });
   });
