@@ -65,7 +65,7 @@ app.get('/search', cors, (req, res) => {
     },
     err => {
       console.error(err);
-      res.json(err.message).end();
+      res.sendStatus(500).json({ error: 'Something went wrong' }).end();
     }
   );
 });

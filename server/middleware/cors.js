@@ -1,22 +1,22 @@
 const cors = require('cors');
 
+const fccRE = /https:\/\/([\w]+\.)?freecodecamp\.org/;
+const netlifyRE = /\.netlify\.com/;
 const whitelist = [
-  'https://freecodecamp.org',
-  'https://guide.freecodecamp.org',
-  'https://news.freecodecamp.org',
   'http://localhost:3000', // fcc dev
   'http://localhost:8000' // guides dev
 ];
 
-const netlifyRE = /\.netlify\.com/;
-
 function isTrustedOrigin(origin, callback) {
+  if (fccRE.test(origin)) {
+    return callback(null, true);
+  }
   if (whitelist.indexOf(origin) !== -1) {
-    callback(null, true);
+    return callback(null, true);
   } else if (netlifyRE.test(origin)) {
-    callback(null, true);
+    return callback(null, true);
   } else {
-    callback(new Error('The request is not from an authorised origin'));
+    return callback(new Error('The request is not from an authorised origin'));
   }
 }
 const corsOptions = {
