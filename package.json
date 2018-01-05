@@ -50,8 +50,7 @@
     "secure-compare": "^3.0.1",
     "sinon": "^4.0.0",
     "string-hash": "^1.1.3",
-    "supertest": "^3.0.0",
-    "textract": "^2.1.2"
+    "supertest": "^3.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
